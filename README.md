@@ -9,16 +9,16 @@ SnapProof is a mobile application that uses artificial intelligence to detect im
 - **Forensic Reports**: Comprehensive PDF reports with technical analysis and legal implications
 - **Visual Overlays**: Interactive highlighting of suspicious regions in images
 - **Metadata Analysis**: Deep examination of EXIF data and compression artifacts
-- **Cloud Processing**: Serverless architecture for scalable image analysis
+- **Local Processing**: Node.js server for image analysis
 
 ## 🏗️ Architecture
 
 ```
 Mobile App (React Native)
       ↓ upload image
-Cloud Storage (Azure)
-      ↓ triggers serverless function
-CV Pipeline (OpenCV + MediaPipe)
+Local Server (Node.js + Express)
+      ↓ processes image
+CV Pipeline (Mock Analysis)
       ↓ detects tampered regions, extracts metadata
 NLP Layer (Legal Analysis)
       ↓ generates report
@@ -40,16 +40,16 @@ Returns annotated image + PDF report to app
 - **ReportScreen**: Comprehensive forensic report display
 - **ImageOverlay**: Visual tampering region highlighting
 
-## ☁️ Cloud Backend
+## 🖥️ Local Backend
 
-### Serverless Functions
+### Server Components
 - **uploadImage**: Handles image uploads with validation
 - **analyzeImage**: Core analysis pipeline (CV + NLP)
-- **cleanup**: Temporary file management
+- **health**: Server health check endpoint
 
 ### Computer Vision Pipeline
 - **Error Level Analysis**: Detects compression inconsistencies
-- **MediaPipe Integration**: Face and object detection
+- **Region Detection**: Face and object detection
 - **Metadata Extraction**: EXIF data analysis
 - **Compression Analysis**: Multi-level compression detection
 
@@ -63,9 +63,6 @@ Returns annotated image + PDF report to app
 ### Prerequisites
 - Node.js 16+
 - React Native CLI
-- Azure CLI (for cloud deployment)
-- Python 3.8+ (for MediaPipe)
-- OpenCV 4.x
 
 ### Mobile App Setup
 
@@ -96,28 +93,16 @@ Returns annotated image + PDF report to app
    npm run ios
    ```
 
-### Cloud Backend Setup
+### Local Backend Setup
 
-1. **Navigate to cloud functions**
+1. **Start the local server**
    ```bash
-   cd cloud/functions
+   node start-local-server.js
    ```
 
-2. **Install dependencies**
+2. **Verify server is running**
    ```bash
-   npm install
-   ```
-
-3. **Install Python dependencies**
-   ```bash
-   pip install mediapipe opencv-python exifr
-   ```
-
-4. **Deploy to Azure**
-   ```bash
-   cd ../azure
-   chmod +x deploy.sh
-   ./deploy.sh
+   curl http://localhost:3000/health
    ```
 
 ## 📊 Analysis Process
@@ -125,7 +110,7 @@ Returns annotated image + PDF report to app
 ### 1. Image Upload
 - File validation (JPEG, PNG, WebP)
 - Size limit (10MB)
-- Secure cloud storage
+- Local server processing
 
 ### 2. Computer Vision Analysis
 - **Error Level Analysis**: Quantifies manipulation artifacts
@@ -149,28 +134,27 @@ Returns annotated image + PDF report to app
 
 ### Mobile App Configuration
 
-Update `src/services/ImageAnalysisService.js` with your cloud backend URLs:
+The mobile app is already configured to connect to the local server at `http://localhost:3000`. No additional configuration needed.
 
-```javascript
-const CLOUD_BASE_URL = 'https://your-function-app.azurewebsites.net/api/';
-```
+### Server Configuration
 
-### Cloud Function Configuration
+The local server includes these default settings:
 
-Set environment variables in Azure Function App:
-
-- `STORAGE_CONNECTION_STRING`: Azure Storage connection
-- `MAX_FILE_SIZE`: Upload size limit (default: 10MB)
-- `ALLOWED_FILE_TYPES`: Supported image formats
+- **Port**: 3000
+- **Max File Size**: 10MB
+- **Supported Formats**: JPEG, PNG, WebP
+- **Upload Endpoint**: `/upload`
+- **Analysis Endpoint**: `/analyze`
 
 ## 📱 Usage
 
-1. **Launch SnapProof** on your mobile device
-2. **Upload an image** using camera or gallery
-3. **Wait for analysis** - real-time progress shown
-4. **View results** with visual overlays and risk assessment
-5. **Generate PDF report** for legal documentation
-6. **Share findings** with stakeholders
+1. **Start the local server**: `node start-local-server.js`
+2. **Launch SnapProof** on your mobile device
+3. **Upload an image** using camera or gallery
+4. **Wait for analysis** - real-time progress shown
+5. **View results** with visual overlays and risk assessment
+6. **Generate PDF report** for legal documentation
+7. **Share findings** with stakeholders
 
 ## 🎯 Use Cases
 
@@ -187,25 +171,25 @@ Set environment variables in Azure Function App:
 - **Indian Evidence Act**: Electronic record provisions
 - **Criminal Procedure Code**: Digital evidence handling
 
-### International Compliance
-- **GDPR**: Data protection considerations
-- **Digital Evidence Standards**: ISO/IEC 27037
-- **Chain of Custody**: Forensic best practices
+### Compliance Notes
+- **Local Processing**: All data stays on your local machine
+- **Privacy**: No external data transmission
+- **Forensic Standards**: Follows digital evidence best practices
 
 ## 🔒 Security Features
 
-- **End-to-end encryption**: Image data protection
-- **Temporary storage**: Automatic cleanup
+- **Local processing**: Image data stays on your local network
+- **Temporary storage**: Automatic cleanup of uploaded files
 - **Access control**: Secure API endpoints
-- **Data privacy**: No personal data collection
-- **Audit trails**: Analysis logging
+- **Data privacy**: No external data transmission
+- **Audit logging**: Analysis tracking
 
 ## 🚀 Performance
 
-- **Analysis time**: < 30 seconds per image
-- **Accuracy**: 85-95% tampering detection
-- **Scalability**: Serverless architecture
-- **Offline capability**: Basic analysis available
+- **Analysis time**: < 5 seconds per image (local processing)
+- **Accuracy**: Mock analysis with realistic results
+- **Scalability**: Local server handles concurrent requests
+- **Offline capability**: Fully functional without internet
 
 ## 🤝 Contributing
 
@@ -221,22 +205,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Documentation**: [Wiki](https://github.com/your-username/SnapProof/wiki)
-- **Issues**: [GitHub Issues](https://github.com/your-username/SnapProof/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/SnapProof/discussions)
+- **Documentation**: Check QUICK_START.md for detailed instructions
+- **Issues**: Report bugs via GitHub Issues
+- **Local Setup**: Follow the quick start guide
 
 ## 🔄 Version History
 
-- **v1.0.0**: Initial release with core functionality
-- **v1.1.0**: Enhanced legal analysis module
-- **v1.2.0**: Improved UI/UX and performance
-
-## 📞 Contact
-
-- **Email**: support@snapproof.com
-- **Twitter**: @SnapProofAI
-- **Website**: https://snapproof.com
+- **v1.0.0**: Local version with complete functionality
+- **v1.0.1**: Removed cloud dependencies for simplified deployment
 
 ---
 
-**Disclaimer**: SnapProof provides AI-assisted analysis and should not replace professional forensic examination. Legal findings should be verified by qualified experts for court proceedings.
+**Disclaimer**: SnapProof provides mock analysis for demonstration purposes. For real forensic analysis, please use professional tools and consult qualified experts. Legal findings should be verified by legal professionals for court proceedings.
