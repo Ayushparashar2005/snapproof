@@ -54,7 +54,7 @@ const analyzeImage = async (image) => {
   }
 };
 
-// Production function to upload image to cloud
+// Local development function to upload image
 const uploadImageToCloud = async (imageUri) => {
   try {
     const formData = new FormData();
@@ -65,7 +65,7 @@ const uploadImageToCloud = async (imageUri) => {
     });
 
     const response = await axios.post(
-      'https://your-cloud-backend.com/api/upload',
+      'http://localhost:3000/upload',
       formData,
       {
         headers: {
@@ -77,17 +77,17 @@ const uploadImageToCloud = async (imageUri) => {
 
     return response.data;
   } catch (error) {
-    console.error('Cloud upload error:', error);
-    throw new Error('Failed to upload image to cloud');
+    console.error('Upload error:', error);
+    throw new Error('Failed to upload image');
   }
 };
 
-// Production function to trigger analysis
+// Local development function to trigger analysis
 const triggerCloudAnalysis = async (imageId) => {
   try {
     const response = await axios.post(
-      `https://your-cloud-backend.com/api/analyze/${imageId}`,
-      {},
+      'http://localhost:3000/analyze',
+      { imageId },
       {
         headers: {
           'Content-Type': 'application/json',
@@ -98,8 +98,8 @@ const triggerCloudAnalysis = async (imageId) => {
 
     return response.data;
   } catch (error) {
-    console.error('Cloud analysis error:', error);
-    throw new Error('Failed to trigger cloud analysis');
+    console.error('Analysis error:', error);
+    throw new Error('Failed to trigger analysis');
   }
 };
 
